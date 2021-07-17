@@ -12,6 +12,8 @@
       "ignoreUrls": true,
       "ignoreComments": true
     }],
-    "@typescript-eslint/strict-boolean-expressions": "off"
+    "@typescript-eslint/strict-boolean-expressions": "off",
+    "no-return-await": "off",
+    "@typescript-eslint/return-await": "off"
   }
 }
