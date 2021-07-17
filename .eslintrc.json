@@ -11,6 +11,7 @@
       "code": 100,
       "ignoreUrls": true,
       "ignoreComments": true
-    }]
+    }],
+    "@typescript-eslint/strict-boolean-expressions": "off"
   }
 }
