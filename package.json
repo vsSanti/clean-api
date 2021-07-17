@@ -5,12 +5,13 @@
   "main": "index.js",
   "scripts": {
     "prepare": "husky install",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@types/jest": "^26.0.24",
     "@types/node": "^16.3.3",
     "@typescript-eslint/eslint-plugin": "^4.28.3",
     "eslint": "^7.30.0",
@@ -20,7 +21,10 @@
     "eslint-plugin-promise": "^4.3.1",
     "git-commit-msg-linter": "^3.2.6",
     "husky": "^7.0.1",
+    "jest": "^27.0.6",
     "lint-staged": "^11.0.1",
+    "ts-jest": "^27.0.3",
+    "ts-node": "^10.1.0",
     "typescript": "^4.3.5"
   }
 }
