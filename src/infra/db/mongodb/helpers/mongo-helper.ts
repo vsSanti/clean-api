@@ -16,6 +16,8 @@ export const MongoHelper = {
   },
 
   async disconnect (): Promise<void> {
+    if (!this.client?.isConnected()) return;
+
     await this.client.close();
     this.client = null as unknown as MongoClient;
   },
