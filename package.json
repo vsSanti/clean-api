@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "start": "sucrase-node src/main/server.ts",
     "prepare": "husky install",
     "pretest": "jest --clearCache",
     "test": "jest --passWithNoTests --no-cache --silent --noStackTrace --runInBand",
@@ -19,6 +20,7 @@
   "devDependencies": {
     "@shelf/jest-mongodb": "^2.0.1",
     "@types/bcrypt": "^5.0.0",
+    "@types/express": "^4.17.13",
     "@types/jest": "^26.0.24",
     "@types/mongodb": "^3.6.20",
     "@types/node": "^16.3.3",
@@ -33,12 +35,14 @@
     "husky": "^7.0.1",
     "jest": "^27.0.6",
     "lint-staged": "^11.0.1",
+    "sucrase": "^3.20.0",
     "ts-jest": "^27.0.3",
     "ts-node": "^10.1.0",
     "typescript": "^4.3.5"
   },
   "dependencies": {
     "bcrypt": "^5.0.1",
+    "express": "^4.17.1",
     "mongodb": "^3.6.3",
     "validator": "^13.6.0"
   }
