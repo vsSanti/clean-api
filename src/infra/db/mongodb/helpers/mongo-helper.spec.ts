@@ -24,4 +24,10 @@ describe('Mongo Helper', () => {
 
     await expect(connectPromise).rejects.toThrow();
   });
+
+  it('should not throw on disconnect client is not connected', async () => {
+    const disconnectPromise = sut.disconnect();
+
+    await expect(disconnectPromise).resolves.not.toThrow();
+  });
 });
