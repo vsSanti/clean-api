@@ -18,4 +18,10 @@ describe('Mongo Helper', () => {
     accountCollection = await sut.getCollection('accounts');
     expect(accountCollection).toBeTruthy();
   });
+
+  it('should throw if no uri is passed on connect', async () => {
+    const connectPromise = sut.connect(undefined);
+
+    await expect(connectPromise).rejects.toThrow();
+  });
 });
