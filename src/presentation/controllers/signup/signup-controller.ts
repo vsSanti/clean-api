@@ -26,18 +26,20 @@ export class SignUpController implements Controller {
 
       const { name, email, password } = body;
 
-      await this.authentication.auth({
-        email,
-        password,
-      });
-
-      const account = await this.addAccount.add({
+      await this.addAccount.add({
         name,
         email,
         password,
       });
 
-      return created(account);
+      const accessToken = await this.authentication.auth({
+        email,
+        password,
+      });
+
+      return created({
+        accessToken,
+      });
     } catch (error) {
       return serverError(error);
     }
