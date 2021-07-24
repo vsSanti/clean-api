@@ -7,8 +7,8 @@ import {
   AddAccount,
   AddAccountModel,
   Validation,
-} from './signup-protocols';
-import { SignUpController } from './signup';
+} from './signup-controller-protocols';
+import { SignUpController } from './signup-controller';
 
 const makeFakeAccount = (): AccountModel => ({
   id: 'valid_id',
