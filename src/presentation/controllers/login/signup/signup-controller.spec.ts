@@ -1,6 +1,6 @@
-import { EmailInUseError, MissingParamError, ServerError } from '../../errors';
-import { HttpRequest } from '../../protocols';
-import { badRequest, created, serverError, forbidden } from '../../helpers/http/http-helper';
+import { EmailInUseError, MissingParamError, ServerError } from '../../../errors';
+import { HttpRequest } from '../../../protocols';
+import { badRequest, created, serverError, forbidden } from '../../../helpers/http/http-helper';
 
 import {
   AccountModel,
