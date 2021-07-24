@@ -10,10 +10,10 @@ services:
       - "27017:27017"
   api:
     container_name: api-container
-    build: .
-    image: clean-api
+    image: node:12
+    working_dir: /usr/src/clean-api
     restart: always
-    command: npm run debug start
+    command: bash -c "npm i --only=prod && npm run debug"
     volumes: 
       - ./dist:/usr/src/clean-api/dist
       - ./package.json:/usr/src/clean-api/package.json
