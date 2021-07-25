@@ -23,24 +23,26 @@ describe('Survey Mongo Repository', () => {
     await MongoHelper.disconnect();
   });
 
-  it('should add a survey on add success', async () => {
-    const sut = makeSut();
+  describe('add()', () => {
+    it('should add a survey on add success', async () => {
+      const sut = makeSut();
 
-    await sut.add({
-      question: 'any_question',
-      answers: [
-        {
-          image: 'any_image',
-          answer: 'any_answer',
-        },
-        {
-          answer: 'another_answer',
-        },
-      ],
-      date: new Date(),
+      await sut.add({
+        question: 'any_question',
+        answers: [
+          {
+            image: 'any_image',
+            answer: 'any_answer',
+          },
+          {
+            answer: 'another_answer',
+          },
+        ],
+        date: new Date(),
+      });
+
+      const survey = await surveyCollection.findOne({ question: 'any_question' });
+      expect(survey).toBeTruthy();
     });
-
-    const survey = await surveyCollection.findOne({ question: 'any_question' });
-    expect(survey).toBeTruthy();
   });
 });
