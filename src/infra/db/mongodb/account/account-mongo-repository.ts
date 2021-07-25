@@ -1,6 +1,7 @@
 import {
   AddAccountRepository,
   LoadAccountByEmailRepository,
+  LoadAccountByTokenRepository,
   UpdateAccessTokenRepository,
 } from '../../../../data/protocols/db/account';
 import { AccountModel } from '../../../../domain/models';
@@ -10,6 +11,7 @@ import { MongoHelper } from '../helpers/mongo-helper';
 export class AccountMongoRepository implements
   AddAccountRepository,
   LoadAccountByEmailRepository,
+  LoadAccountByTokenRepository,
   UpdateAccessTokenRepository {
   async add (accountData: AddAccountModel): Promise<AccountModel> {
     const accountCollection = await MongoHelper.getCollection('accounts');
@@ -23,6 +25,17 @@ export class AccountMongoRepository implements
     const accountCollection = await MongoHelper.getCollection('accounts');
 
     const account = await accountCollection.findOne({ email });
+
+    return account && MongoHelper.map<AccountModel>(account);
+  }
+
+  async loadByToken (accessToken: string, role?: string): Promise<AccountModel> {
+    const accountCollection = await MongoHelper.getCollection('accounts');
+
+    const account = await accountCollection.findOne({
+      accessToken,
+      role,
+    });
 
     return account && MongoHelper.map<AccountModel>(account);
   }
