@@ -21,22 +21,11 @@ describe('Survey Routes', () => {
   });
 
   describe('POST /surveys', () => {
-    it('should return 204 on add survey success', async () => {
+    it('should return 403 on add survey without accessToken', async () => {
       await request(app)
         .post('/api/surveys')
-        .send({
-          question: 'Question',
-          answers: [
-            {
-              image: 'http://image-name.com',
-              answer: 'Answer',
-            },
-            {
-              answer: 'Other Answer',
-            },
-          ],
-        })
-        .expect(204);
+        .send({ })
+        .expect(403);
     });
   });
 });
