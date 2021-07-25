@@ -1,7 +1,7 @@
 {
   "extends": "standard-with-typescript",
   "parserOptions": {
-    "project": "./tsconfig.eslint.json"
+    "project": "./tsconfig.json"
   },
   "rules": {
     "semi": [1, "always"],
@@ -10,7 +10,8 @@
     "max-len": ["error", { 
       "code": 100,
       "ignoreUrls": true,
-      "ignoreComments": true
+      "ignoreComments": true,
+      "ignorePattern": "^import .*"
     }],
     "@typescript-eslint/strict-boolean-expressions": "off",
     "no-return-await": "off",

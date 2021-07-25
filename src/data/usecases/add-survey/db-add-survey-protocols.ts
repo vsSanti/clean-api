@@ -1,2 +1,2 @@
-export * from '../../../domain/usecases';
-export * from '../../protocols/db/survey';
+export * from '@/domain/usecases';
+export * from '@/data/protocols/db/survey';

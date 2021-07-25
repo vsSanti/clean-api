@@ -1,7 +1,7 @@
-import { AddSurveyRepository, LoadSurveysRepository } from '../../../../data/protocols/db/survey';
-import { SurveyModel } from '../../../../domain/models';
-import { AddSurveyModel } from '../../../../domain/usecases';
-import { MongoHelper } from '../helpers/mongo-helper';
+import { MongoHelper } from '@/infra/db/mongodb/helpers/mongo-helper';
+import { SurveyModel } from '@/domain/models';
+import { AddSurveyModel } from '@/domain/usecases';
+import { AddSurveyRepository, LoadSurveysRepository } from '@/data/protocols/db/survey';
 
 export class SurveyMongoRepository implements AddSurveyRepository, LoadSurveysRepository {
   async add (surveyData: AddSurveyModel): Promise<void> {
