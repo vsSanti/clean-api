@@ -1,4 +1,5 @@
 import { Collection } from 'mongodb';
+import MockDate from 'mockdate';
 
 import { MongoHelper } from '@/infra/db/mongodb/helpers/mongo-helper';
 
@@ -13,6 +14,7 @@ describe('Survey Mongo Repository', () => {
 
   beforeAll(async () => {
     await MongoHelper.connect(process.env.MONGO_URL);
+    MockDate.set(new Date());
   });
 
   beforeEach(async () => {
@@ -22,6 +24,7 @@ describe('Survey Mongo Repository', () => {
 
   afterAll(async () => {
     await MongoHelper.disconnect();
+    MockDate.reset();
   });
 
   describe('add()', () => {
@@ -85,6 +88,28 @@ describe('Survey Mongo Repository', () => {
       const surveys = await sut.loadAll();
 
       expect(surveys.length).toBe(0);
+    });
+  });
+
+  describe('loadById()', () => {
+    it('should load survey by id on success', async () => {
+      const res = await surveyCollection.insertOne({
+        question: 'any_question',
+        answers: [
+          {
+            image: 'any_image',
+            answer: 'any_answer',
+          },
+        ],
+        date: new Date(),
+      });
+      const sut = makeSut();
+
+      const survey = await sut.loadById(res.ops[0]._id);
+
+      expect(survey).toBeTruthy();
+      expect(survey.question).toBe('any_question');
+      expect(survey.date).toEqual(new Date());
     });
   });
 });
