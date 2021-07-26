@@ -1,6 +1,6 @@
 import { MongoHelper } from '@/infra/db/mongodb/helpers/mongo-helper';
 import { AccountModel } from '@/domain/models';
-import { AddAccountModel } from '@/domain/usecases';
+import { AddAccountModel } from '@/domain/usecases/account';
 import {
   AddAccountRepository,
   LoadAccountByEmailRepository,
