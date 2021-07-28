@@ -2,6 +2,7 @@ import MockDate from 'mockdate';
 
 import { InvalidParamError } from '@/presentation/errors';
 import { forbidden, ok, serverError } from '@/presentation/helpers/http/http-helper';
+import { throwError } from '@/domain/test';
 
 import {
   HttpRequest,
@@ -112,7 +113,7 @@ describe('SaveSurveyResult Controller', () => {
   it('should return 500 if LoadSurveyById throws', async () => {
     const { sut, loadSurveyByIdStub } = makeSut();
     jest.spyOn(loadSurveyByIdStub, 'loadById')
-      .mockReturnValueOnce(new Promise((resolve, reject) => reject(new Error())));
+      .mockImplementationOnce(throwError);
 
     const httpResponse = await sut.handle(makeFakeRequest());
 
@@ -148,7 +149,7 @@ describe('SaveSurveyResult Controller', () => {
   it('should return 500 if SaveSurveyResult throws', async () => {
     const { sut, saveSurveyResultStub } = makeSut();
     jest.spyOn(saveSurveyResultStub, 'save')
-      .mockReturnValueOnce(new Promise((resolve, reject) => reject(new Error())));
+      .mockImplementationOnce(throwError);
 
     const httpResponse = await sut.handle(makeFakeRequest());
 

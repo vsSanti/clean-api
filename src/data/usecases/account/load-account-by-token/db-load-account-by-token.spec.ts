@@ -1,5 +1,6 @@
-import { AccountModel, Decrypter, LoadAccountByTokenRepository } from './db-load-account-by-token-protocols';
+import { throwError } from '@/domain/test';
 
+import { AccountModel, Decrypter, LoadAccountByTokenRepository } from './db-load-account-by-token-protocols';
 import { DbLoadAccountByToken } from './db-load-account-by-token';
 
 const makeFakeAccount = (): AccountModel => ({
@@ -93,7 +94,7 @@ describe('DbLoadAccountByToken Usecase', () => {
     const { sut, decrypterStub } = makeSut();
 
     jest.spyOn(decrypterStub, 'decrypt')
-      .mockReturnValueOnce(new Promise((resolve, reject) => reject(new Error())));
+      .mockImplementationOnce(throwError);
 
     const errorPromise = sut.load('any_token', 'any_role');
     await expect(errorPromise).rejects.toThrow();
@@ -103,7 +104,7 @@ describe('DbLoadAccountByToken Usecase', () => {
     const { sut, loadAccountByTokenRepositoryStub } = makeSut();
 
     jest.spyOn(loadAccountByTokenRepositoryStub, 'loadByToken')
-      .mockReturnValueOnce(new Promise((resolve, reject) => reject(new Error())));
+      .mockImplementationOnce(throwError);
 
     const errorPromise = sut.load('any_token', 'any_role');
     await expect(errorPromise).rejects.toThrow();

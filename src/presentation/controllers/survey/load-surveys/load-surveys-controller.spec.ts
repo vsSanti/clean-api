@@ -1,6 +1,7 @@
 import MockDate from 'mockdate';
 
 import { noContent, ok, serverError } from '@/presentation/helpers/http/http-helper';
+import { throwError } from '@/domain/test';
 
 import {
   SurveyModel,
@@ -95,7 +96,7 @@ describe('LoadSurveys Controller', () => {
   it('should return 500 if LoadSurvey throws', async () => {
     const { sut, loadSurveysStub } = makeSut();
     jest.spyOn(loadSurveysStub, 'load')
-      .mockReturnValueOnce(new Promise((resolve, reject) => reject(new Error())));
+      .mockImplementationOnce(throwError);
 
     const httpResponse = await sut.handle({});
 

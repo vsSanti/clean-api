@@ -1,3 +1,5 @@
+import { throwError } from '@/domain/test';
+
 import { DbAuthentication } from './db-authentication';
 import {
   LoadAccountByEmailRepository,
@@ -104,7 +106,7 @@ describe('DbAuthentication UseCase', () => {
   it('should throw if LoadAccountByEmailRepository throws', async () => {
     const { sut, loadAccountByEmailRepositoryStub } = makeSut();
     jest.spyOn(loadAccountByEmailRepositoryStub, 'loadByEmail')
-      .mockReturnValueOnce(new Promise((resolve, reject) => reject(new Error())));
+      .mockImplementationOnce(throwError);
 
     const promise = sut.auth(makeFakeAuthentication());
 
@@ -133,7 +135,7 @@ describe('DbAuthentication UseCase', () => {
   it('should throw if HashComparer throws', async () => {
     const { sut, hashComparerStub } = makeSut();
     jest.spyOn(hashComparerStub, 'compare')
-      .mockReturnValueOnce(new Promise((resolve, reject) => reject(new Error())));
+      .mockImplementationOnce(throwError);
 
     const promise = sut.auth(makeFakeAuthentication());
 
@@ -162,7 +164,7 @@ describe('DbAuthentication UseCase', () => {
   it('should throw if Encrypter throws', async () => {
     const { sut, encrypterStub } = makeSut();
     jest.spyOn(encrypterStub, 'encrypt')
-      .mockReturnValueOnce(new Promise((resolve, reject) => reject(new Error())));
+      .mockImplementationOnce(throwError);
 
     const promise = sut.auth(makeFakeAuthentication());
 
@@ -189,7 +191,7 @@ describe('DbAuthentication UseCase', () => {
   it('should throw if UpdateAccessTokenRepository throws', async () => {
     const { sut, updateAccessTokenRepositoryStub } = makeSut();
     jest.spyOn(updateAccessTokenRepositoryStub, 'updateAccessToken')
-      .mockReturnValueOnce(new Promise((resolve, reject) => reject(new Error())));
+      .mockImplementationOnce(throwError);
 
     const promise = sut.auth(makeFakeAuthentication());
 
