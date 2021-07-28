@@ -1,30 +1,10 @@
 import MockDate from 'mockdate';
 
-import { throwError } from '@/domain/test';
+import { mockAddSurveyRepository } from '@/data/test';
+import { mockAddSurveyParams, throwError } from '@/domain/test';
 
-import { AddSurveyRepository, AddSurveyParams } from './db-add-survey-protocols';
+import { AddSurveyRepository } from './db-add-survey-protocols';
 import { DbAddSurvey } from './db-add-survey';
-
-const makeFakeSurveyData = (): AddSurveyParams => ({
-  question: 'any_question',
-  answers: [
-    {
-      image: 'any_image',
-      answer: 'any_answer',
-    },
-  ],
-  date: new Date(),
-});
-
-const makeFakeAddSurveyRepository = (): AddSurveyRepository => {
-  class AddSurveyRepositoryStub implements AddSurveyRepository {
-    async add (surveyData: AddSurveyParams): Promise<void> {
-      return null;
-    }
-  }
-
-  return new AddSurveyRepositoryStub();
-};
 
 type SutTypes = {
   sut: DbAddSurvey
@@ -32,7 +12,7 @@ type SutTypes = {
 }
 
 const makeSut = (): SutTypes => {
-  const addSurveyRepositoryStub = makeFakeAddSurveyRepository();
+  const addSurveyRepositoryStub = mockAddSurveyRepository();
 
   const sut = new DbAddSurvey(addSurveyRepositoryStub);
 
@@ -55,18 +35,17 @@ describe('DbAddSurvey Usecase', () => {
     const { sut, addSurveyRepositoryStub } = makeSut();
     const addSpy = jest.spyOn(addSurveyRepositoryStub, 'add');
 
-    await sut.add(makeFakeSurveyData());
+    await sut.add(mockAddSurveyParams());
 
-    expect(addSpy).toHaveBeenCalledWith(makeFakeSurveyData());
+    expect(addSpy).toHaveBeenCalledWith(mockAddSurveyParams());
   });
 
   it('should throw if AddSurveyRepository throws', async () => {
     const { sut, addSurveyRepositoryStub } = makeSut();
 
-    jest.spyOn(addSurveyRepositoryStub, 'add')
-      .mockImplementationOnce(throwError);
+    jest.spyOn(addSurveyRepositoryStub, 'add').mockImplementationOnce(throwError);
 
-    const errorPromise = sut.add(makeFakeSurveyData());
+    const errorPromise = sut.add(mockAddSurveyParams());
     await expect(errorPromise).rejects.toThrow();
   });
 });
