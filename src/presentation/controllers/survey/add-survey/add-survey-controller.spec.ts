@@ -7,7 +7,7 @@ import { throwError } from '@/domain/test';
 import { HttpRequest, Validation, AddSurvey } from './add-survey-controller-protocols';
 import { AddSurveyController } from './add-survey-controller';
 
-const makeFakeRequest = (): HttpRequest => ({
+const mockRequest = (): HttpRequest => ({
   body: {
     question: 'any_question',
     answers: [
@@ -52,9 +52,9 @@ describe('AddSurvey Controller', () => {
     const { sut, validationStub } = makeSut();
     const validateSpy = jest.spyOn(validationStub, 'validate');
 
-    await sut.handle(makeFakeRequest());
+    await sut.handle(mockRequest());
 
-    expect(validateSpy).toHaveBeenCalledWith(makeFakeRequest().body);
+    expect(validateSpy).toHaveBeenCalledWith(mockRequest().body);
   });
 
   it('should return 400 if validation fails', async () => {
@@ -62,7 +62,7 @@ describe('AddSurvey Controller', () => {
     jest.spyOn(validationStub, 'validate')
       .mockReturnValueOnce(new Error());
 
-    const httpResponse = await sut.handle(makeFakeRequest());
+    const httpResponse = await sut.handle(mockRequest());
 
     expect(httpResponse).toEqual(badRequest(new Error()));
   });
@@ -71,23 +71,23 @@ describe('AddSurvey Controller', () => {
     const { sut, addSurveyStub } = makeSut();
     const add = jest.spyOn(addSurveyStub, 'add');
 
-    await sut.handle(makeFakeRequest());
+    await sut.handle(mockRequest());
 
-    expect(add).toHaveBeenCalledWith(makeFakeRequest().body);
+    expect(add).toHaveBeenCalledWith(mockRequest().body);
   });
 
   it('should return 500 if AddSurvey throws', async () => {
     const { sut, addSurveyStub } = makeSut();
     jest.spyOn(addSurveyStub, 'add').mockImplementationOnce(throwError);
 
-    const httpResponse = await sut.handle(makeFakeRequest());
+    const httpResponse = await sut.handle(mockRequest());
 
     expect(httpResponse).toEqual(serverError(new Error()));
   });
 
   it('should return 204 on success', async () => {
     const { sut } = makeSut();
-    const httpResponse = await sut.handle(makeFakeRequest());
+    const httpResponse = await sut.handle(mockRequest());
 
     expect(httpResponse).toEqual(noContent());
   });

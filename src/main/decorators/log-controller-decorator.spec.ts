@@ -6,13 +6,13 @@ import { mockAccountModel } from '@/domain/test';
 
 import { LogControllerDecorator } from './log-controller-decorator';
 
-const makeFakeServerError = (): HttpResponse => {
+const mockServerError = (): HttpResponse => {
   const fakeError = new Error();
   fakeError.stack = 'any_stack';
   return serverError(fakeError);
 };
 
-const makeController = (): Controller => {
+const mockController = (): Controller => {
   class ControllerStub implements Controller {
     async handle (httpRequest: HttpRequest): Promise<HttpResponse> {
       return Promise.resolve(ok(mockAccountModel()));
@@ -21,7 +21,7 @@ const makeController = (): Controller => {
   return new ControllerStub();
 };
 
-const makeFakeRequest = (): HttpRequest => ({
+const mockRequest = (): HttpRequest => ({
   body: {
     name: 'any_name',
     email: 'any_email@email.com',
@@ -37,7 +37,7 @@ type SutTypes = {
 }
 
 const makeSut = (): SutTypes => {
-  const controllerStub = makeController();
+  const controllerStub = mockController();
   const logErrorRepositoryStub = mockLogErrorRepository();
 
   const sut = new LogControllerDecorator(controllerStub, logErrorRepositoryStub);
@@ -54,14 +54,14 @@ describe('LogController Decorator', () => {
     const { controllerStub, sut } = makeSut();
     const handleSpy = jest.spyOn(controllerStub, 'handle');
 
-    await sut.handle(makeFakeRequest());
-    expect(handleSpy).toHaveBeenCalledWith(makeFakeRequest());
+    await sut.handle(mockRequest());
+    expect(handleSpy).toHaveBeenCalledWith(mockRequest());
   });
 
   it('should return the same result of the controller', async () => {
     const { sut } = makeSut();
 
-    const httpResponse = await sut.handle(makeFakeRequest());
+    const httpResponse = await sut.handle(mockRequest());
 
     expect(httpResponse).toEqual(ok(mockAccountModel()));
   });
@@ -71,9 +71,9 @@ describe('LogController Decorator', () => {
 
     const logSpy = jest.spyOn(logErrorRepositoryStub, 'logError');
     jest.spyOn(controllerStub, 'handle')
-      .mockReturnValueOnce(Promise.resolve(makeFakeServerError()));
+      .mockReturnValueOnce(Promise.resolve(mockServerError()));
 
-    await sut.handle(makeFakeRequest());
+    await sut.handle(mockRequest());
 
     expect(logSpy).toHaveBeenCalledWith('any_stack');
   });

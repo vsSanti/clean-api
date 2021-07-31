@@ -9,7 +9,7 @@ import env from '@/main/config/env';
 let surveyCollection: Collection;
 let accountCollection: Collection;
 
-const makeAccessToken = async (): Promise<string> => {
+const mockAccessToken = async (): Promise<string> => {
   const res = await accountCollection.insertOne({
     name: 'Vinicius',
     email: 'viniciussdsilva@gmail.com',
@@ -53,7 +53,7 @@ describe('SurveyResult Routes', () => {
     });
 
     it('should return 200 with valid accessToken', async () => {
-      const accessToken = await makeAccessToken();
+      const accessToken = await mockAccessToken();
 
       const res = await surveyCollection.insertOne({
         question: 'Question',

@@ -9,7 +9,7 @@ import env from '@/main/config/env';
 let surveyCollection: Collection;
 let accountCollection: Collection;
 
-const makeAccessToken = async (): Promise<string> => {
+const mockAccessToken = async (): Promise<string> => {
   const res = await accountCollection.insertOne({
     name: 'Vinicius',
     email: 'viniciussdsilva@gmail.com',
@@ -51,7 +51,7 @@ describe('Survey Routes', () => {
     });
 
     it('should return 204 with valid accessToken', async () => {
-      const accessToken = await makeAccessToken();
+      const accessToken = await mockAccessToken();
       await request(app)
         .post('/api/surveys')
         .set('x-access-token', accessToken)
@@ -79,7 +79,7 @@ describe('Survey Routes', () => {
     });
 
     it('should return 204 on load no surveys with valid accessToken', async () => {
-      const accessToken = await makeAccessToken();
+      const accessToken = await mockAccessToken();
       await request(app)
         .get('/api/surveys')
         .set('x-access-token', accessToken)
