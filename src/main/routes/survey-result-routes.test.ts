@@ -48,6 +48,30 @@ describe('SurveyResult Routes', () => {
         .get('/api/surveys/any_id/results')
         .expect(403);
     });
+
+    it('should return 200 with valid accessToken', async () => {
+      const accessToken = await mockAccessToken();
+
+      const res = await surveyCollection.insertOne({
+        question: 'Question',
+        answers: [
+          {
+            image: 'http://image-name.com',
+            answer: 'Answer',
+          },
+          {
+            answer: 'Other Answer',
+          },
+        ],
+        date: new Date(),
+      });
+      const surveyId: string = res.ops[0]._id;
+
+      await request(app)
+        .get(`/api/surveys/${surveyId}/results`)
+        .set('x-access-token', accessToken)
+        .expect(200);
+    });
   });
 
   describe('PUT /surveys/:surveyId/results', () => {
