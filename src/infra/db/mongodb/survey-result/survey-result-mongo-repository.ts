@@ -3,10 +3,12 @@ import { ObjectId } from 'mongodb';
 import { MongoHelper, QueryBuilder } from '@/infra/db/mongodb/helpers';
 import { SurveyResultModel } from '@/domain/models';
 import { SaveSurveyResultParams } from '@/domain/usecases/survey-result';
-import { SaveSurveyResultRepository } from '@/data/protocols/db/survey-result';
+import { SaveSurveyResultRepository, LoadSurveyResultRepository } from '@/data/protocols/db/survey-result';
 
-export class SurveyResultMongoRepository implements SaveSurveyResultRepository {
-  private async loadBySurveyId (surveyId: string): Promise<SurveyResultModel> {
+export class SurveyResultMongoRepository implements
+  SaveSurveyResultRepository,
+  LoadSurveyResultRepository {
+  async loadBySurveyId (surveyId: string): Promise<SurveyResultModel> {
     const surveyResultCollection = await MongoHelper.getCollection('survey-results');
 
     const query = new QueryBuilder()
