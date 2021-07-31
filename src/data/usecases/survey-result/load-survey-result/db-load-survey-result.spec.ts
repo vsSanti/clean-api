@@ -1,5 +1,7 @@
+import MockDate from 'mockdate';
+
 import { mockLoadSurveyResultRepository } from '@/data/test';
-import { throwError } from '@/domain/test';
+import { mockSurveyResultModel, throwError } from '@/domain/test';
 
 import { LoadSurveyResultRepository } from './db-load-survey-result-protocols';
 import { DbLoadSurveyResult } from './db-load-survey-result';
@@ -20,6 +22,14 @@ const makeSut = (): SutTypes => {
 };
 
 describe('DbLoadSurveyResult Usecase', () => {
+  beforeAll(() => {
+    MockDate.set(new Date());
+  });
+
+  afterAll(() => {
+    MockDate.reset();
+  });
+
   it('should call LoadSurveyResultRepository with correct value', async () => {
     const { sut, loadSurveyResultRepositoryStub } = makeSut();
     const loadBySurveyIdSpy = jest.spyOn(loadSurveyResultRepositoryStub, 'loadBySurveyId');
@@ -35,5 +45,13 @@ describe('DbLoadSurveyResult Usecase', () => {
 
     const errorPromise = sut.load('any_survey_id');
     await expect(errorPromise).rejects.toThrow();
+  });
+
+  it('should return a SurveyResultModel on success', async () => {
+    const { sut } = makeSut();
+
+    const surveyResult = await sut.load('any_survey_id');
+
+    expect(surveyResult).toEqual(mockSurveyResultModel());
   });
 });
