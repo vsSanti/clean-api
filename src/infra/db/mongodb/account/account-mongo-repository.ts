@@ -1,4 +1,4 @@
-import { MongoHelper } from '@/infra/db/mongodb/helpers/mongo-helper';
+import { MongoHelper } from '@/infra/db/mongodb/helpers';
 import { AccountModel } from '@/domain/models';
 import { AddAccountParams } from '@/domain/usecases/account';
 import {

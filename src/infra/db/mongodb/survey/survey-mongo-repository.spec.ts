@@ -1,7 +1,7 @@
 import { Collection } from 'mongodb';
 import MockDate from 'mockdate';
 
-import { MongoHelper } from '@/infra/db/mongodb/helpers/mongo-helper';
+import { MongoHelper } from '@/infra/db/mongodb/helpers';
 import { mockAddSurveyParams, mockSurveyModels } from '@/domain/test';
 
 import { SurveyMongoRepository } from './survey-mongo-repository';

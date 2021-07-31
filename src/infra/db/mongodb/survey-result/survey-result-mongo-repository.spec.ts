@@ -2,7 +2,7 @@ import { Collection, ObjectId } from 'mongodb';
 import MockDate from 'mockdate';
 
 import { AccountModel, SurveyModel } from '@/domain/models';
-import { MongoHelper } from '@/infra/db/mongodb/helpers/mongo-helper';
+import { MongoHelper } from '@/infra/db/mongodb/helpers';
 import { mockAddSurveyParams, mockAddAccountParams } from '@/domain/test';
 
 import { SurveyResultMongoRepository } from './survey-result-mongo-repository';

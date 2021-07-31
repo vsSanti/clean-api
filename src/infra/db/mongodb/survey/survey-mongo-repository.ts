@@ -1,6 +1,6 @@
 import { ObjectId } from 'mongodb';
 
-import { MongoHelper } from '@/infra/db/mongodb/helpers/mongo-helper';
+import { MongoHelper } from '@/infra/db/mongodb/helpers';
 import { SurveyModel } from '@/domain/models';
 import { AddSurveyParams } from '@/domain/usecases/survey';
 import { AddSurveyRepository, LoadSurveyByIdRepository, LoadSurveysRepository } from '@/data/protocols/db/survey';
