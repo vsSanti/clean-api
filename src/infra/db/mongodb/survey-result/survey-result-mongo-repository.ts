@@ -169,7 +169,7 @@ export class SurveyResultMongoRepository implements
     return surveyResult?.[0] || null;
   }
 
-  async save (data: SaveSurveyResultParams): Promise<SurveyResultModel> {
+  async save (data: SaveSurveyResultParams): Promise<void> {
     const surveyResultCollection = await MongoHelper.getCollection('survey-results');
     await surveyResultCollection.findOneAndUpdate({
       surveyId: new ObjectId(data.surveyId),
@@ -182,9 +182,5 @@ export class SurveyResultMongoRepository implements
     }, {
       upsert: true,
     });
-
-    const surveyResult = await this.loadBySurveyId(data.surveyId);
-
-    return surveyResult;
   }
 }
