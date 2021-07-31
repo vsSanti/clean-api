@@ -165,8 +165,7 @@ export class SurveyResultMongoRepository implements
       .build();
 
     const surveyResult = await surveyResultCollection.aggregate(query).toArray();
-
-    return surveyResult?.[0] || null;
+    return surveyResult.length ? surveyResult[0] : null;
   }
 
   async save (data: SaveSurveyResultParams): Promise<void> {
