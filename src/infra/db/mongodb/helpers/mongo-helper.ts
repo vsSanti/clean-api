@@ -31,9 +31,9 @@ export const MongoHelper = {
   },
 
   map<T> (data: any): T {
-    const { _id, ...obj } = data;
+    const { _id, ...rest } = data;
 
-    return { id: _id, ...obj };
+    return { id: _id, ...rest };
   },
 
   mapCollection<T> (collection: any[]): T[] {

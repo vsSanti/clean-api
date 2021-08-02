@@ -1,10 +1,6 @@
-import {
-  EmailValidation,
-  RequiredFieldValidation,
-  ValidationComposite,
-} from '@/validation/validators';
-import { mockEmailValidator } from '@/validation/test';
+import { EmailValidation, RequiredFieldValidation, ValidationComposite } from '@/validation/validators';
 import { Validation } from '@/presentation/protocols';
+import { EmailValidatorAdapter } from '@/infra/validators/email-validator-adapter';
 
 import { makeLoginValidation } from './login-validation-factory';
 
@@ -19,7 +15,7 @@ describe('LoginValidation Factory', () => {
       validations.push(new RequiredFieldValidation(field));
     }
 
-    validations.push(new EmailValidation('email', mockEmailValidator()));
+    validations.push(new EmailValidation('email', new EmailValidatorAdapter()));
 
     expect(ValidationComposite).toHaveBeenCalledWith(validations);
   });

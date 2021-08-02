@@ -1,34 +1,37 @@
+import faker from 'faker';
+
 import { AccountModel } from '@/domain/models';
 import { AddAccount, AddAccountParams, Authentication, AuthenticationParams, LoadAccountByToken } from '@/domain/usecases/account';
 import { mockAccountModel } from '@/domain/test';
 
-export const mockAddAccount = (): AddAccount => {
-  class AddAccountStub implements AddAccount {
-    async add (account: AddAccountParams): Promise<AccountModel> {
-      const fakeAccount = mockAccountModel();
-      return await Promise.resolve(fakeAccount);
-    }
+export class AddAccountSpy implements AddAccount {
+  accountModel = mockAccountModel();
+  addAccountParams: AddAccountParams;
+
+  async add (account: AddAccountParams): Promise<AccountModel> {
+    this.addAccountParams = account;
+    return Promise.resolve(this.accountModel);
   }
+}
 
-  return new AddAccountStub();
-};
+export class AuthenticationSpy implements Authentication {
+  token = faker.datatype.uuid();
+  authenticationParams: AuthenticationParams;
 
-export const mockAuthentication = (): Authentication => {
-  class AuthenticationStub implements Authentication {
-    async auth (authentication: AuthenticationParams): Promise<string> {
-      return Promise.resolve('any_token');
-    }
+  async auth (authenticationParams: AuthenticationParams): Promise<string> {
+    this.authenticationParams = authenticationParams;
+    return Promise.resolve(this.token);
   }
+}
 
-  return new AuthenticationStub();
-};
+export class LoadAccountByTokenSpy implements LoadAccountByToken {
+  accountModel = mockAccountModel();
+  accessToken: string;
+  role: string;
 
-export const mockLoadAccountByToken = (): LoadAccountByToken => {
-  class LoadAccountByTokenStub implements LoadAccountByToken {
-    async load (accessToken: string, role?: string): Promise<AccountModel> {
-      return mockAccountModel();
-    }
+  async load (accessToken: string, role?: string): Promise<AccountModel> {
+    this.accessToken = accessToken;
+    this.role = role;
+    return Promise.resolve(this.accountModel);
   }
-
-  return new LoadAccountByTokenStub();
-};
+}

@@ -2,7 +2,7 @@ import { Collection } from 'mongodb';
 import MockDate from 'mockdate';
 
 import { MongoHelper } from '@/infra/db/mongodb/helpers';
-import { mockAddSurveyParams, mockSurveyModels } from '@/domain/test';
+import { mockAddSurveyParams } from '@/domain/test';
 
 import { SurveyMongoRepository } from './survey-mongo-repository';
 
@@ -10,7 +10,7 @@ const makeSut = (): SurveyMongoRepository => {
   return new SurveyMongoRepository();
 };
 
-describe('Survey Mongo Repository', () => {
+describe('SurveyMongoRepository', () => {
   let surveyCollection: Collection;
 
   beforeAll(async () => {
@@ -31,25 +31,24 @@ describe('Survey Mongo Repository', () => {
   describe('add()', () => {
     it('should add a survey on add success', async () => {
       const sut = makeSut();
-
       await sut.add(mockAddSurveyParams());
-
-      const survey = await surveyCollection.findOne({ question: 'any_question' });
-      expect(survey).toBeTruthy();
+      const count = await surveyCollection.countDocuments();
+      expect(count).toBe(1);
     });
   });
 
   describe('loadAll()', () => {
     it('should load all surveys on success', async () => {
-      await surveyCollection.insertMany(mockSurveyModels());
+      const addSurveyModels = [mockAddSurveyParams(), mockAddSurveyParams()];
+      await surveyCollection.insertMany(addSurveyModels);
       const sut = makeSut();
 
       const surveys = await sut.loadAll();
 
       expect(surveys.length).toBe(2);
       expect(surveys[0].id).toBeTruthy();
-      expect(surveys[0].question).toBe('any_question');
-      expect(surveys[1].question).toBe('other_question');
+      expect(surveys[0].question).toBe(addSurveyModels[0].question);
+      expect(surveys[1].question).toBe(addSurveyModels[1].question);
     });
 
     it('should load empty list', async () => {
@@ -70,8 +69,6 @@ describe('Survey Mongo Repository', () => {
 
       expect(survey).toBeTruthy();
       expect(survey.id).toBeTruthy();
-      expect(survey.question).toBe('any_question');
-      expect(survey.date).toEqual(new Date());
     });
   });
 });

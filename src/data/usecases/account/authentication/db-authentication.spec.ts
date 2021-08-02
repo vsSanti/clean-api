@@ -1,148 +1,126 @@
 import {
-  mockEncrypter,
-  mockHashComparer,
-  mockLoadAccountByEmailRepository,
-  mockUpdateAccessTokenRepository,
+  EncrypterSpy,
+  HashComparerSpy,
+  LoadAccountByEmailRepositorySpy,
+  UpdateAccessTokenRepositorySpy,
 } from '@/data/test';
-import { mockAuthentication, throwError } from '@/domain/test';
+import { mockAuthenticationParams, throwError } from '@/domain/test';
 
 import { DbAuthentication } from './db-authentication';
-import {
-  LoadAccountByEmailRepository,
-  HashComparer,
-  Encrypter,
-  UpdateAccessTokenRepository,
-  Authentication,
-} from './db-authentication-protocols';
 
 type SutTypes = {
-  sut: Authentication
-  loadAccountByEmailRepositoryStub: LoadAccountByEmailRepository
-  hashComparerStub: HashComparer
-  encrypterStub: Encrypter
-  updateAccessTokenRepositoryStub: UpdateAccessTokenRepository
+  sut: DbAuthentication
+  loadAccountByEmailRepositorySpy: LoadAccountByEmailRepositorySpy
+  hashComparerSpy: HashComparerSpy
+  encrypterSpy: EncrypterSpy
+  updateAccessTokenRepositorySpy: UpdateAccessTokenRepositorySpy
 }
 
 const makeSut = (): SutTypes => {
-  const loadAccountByEmailRepositoryStub = mockLoadAccountByEmailRepository();
-  const hashComparerStub = mockHashComparer();
-  const encrypterStub = mockEncrypter();
-  const updateAccessTokenRepositoryStub = mockUpdateAccessTokenRepository();
+  const loadAccountByEmailRepositorySpy = new LoadAccountByEmailRepositorySpy();
+  const hashComparerSpy = new HashComparerSpy();
+  const encrypterSpy = new EncrypterSpy();
+  const updateAccessTokenRepositorySpy = new UpdateAccessTokenRepositorySpy();
 
   const sut = new DbAuthentication(
-    loadAccountByEmailRepositoryStub,
-    hashComparerStub,
-    encrypterStub,
-    updateAccessTokenRepositoryStub,
+    loadAccountByEmailRepositorySpy,
+    hashComparerSpy,
+    encrypterSpy,
+    updateAccessTokenRepositorySpy,
   );
 
   return {
     sut,
-    loadAccountByEmailRepositoryStub,
-    hashComparerStub,
-    encrypterStub,
-    updateAccessTokenRepositoryStub,
+    loadAccountByEmailRepositorySpy,
+    hashComparerSpy,
+    encrypterSpy,
+    updateAccessTokenRepositorySpy,
   };
 };
 
 describe('DbAuthentication UseCase', () => {
   it('should call LoadAccountByEmailRepository with correct email', async () => {
-    const { sut, loadAccountByEmailRepositoryStub } = makeSut();
-    const loadSpy = jest.spyOn(loadAccountByEmailRepositoryStub, 'loadByEmail');
+    const { sut, loadAccountByEmailRepositorySpy } = makeSut();
+    const authenticationParams = mockAuthenticationParams();
+    await sut.auth(authenticationParams);
 
-    await sut.auth(mockAuthentication());
-
-    expect(loadSpy).toHaveBeenCalledWith('any_email@email.com');
+    expect(loadAccountByEmailRepositorySpy.email).toBe(authenticationParams.email);
   });
 
   it('should throw if LoadAccountByEmailRepository throws', async () => {
-    const { sut, loadAccountByEmailRepositoryStub } = makeSut();
-    jest.spyOn(loadAccountByEmailRepositoryStub, 'loadByEmail').mockImplementationOnce(throwError);
-
-    const promise = sut.auth(mockAuthentication());
-
+    const { sut, loadAccountByEmailRepositorySpy } = makeSut();
+    jest.spyOn(loadAccountByEmailRepositorySpy, 'loadByEmail').mockImplementationOnce(throwError);
+    const promise = sut.auth(mockAuthenticationParams());
     await expect(promise).rejects.toThrow();
   });
 
   it('should return null if LoadAccountByEmailRepository returns null', async () => {
-    const { sut, loadAccountByEmailRepositoryStub } = makeSut();
-    jest.spyOn(loadAccountByEmailRepositoryStub, 'loadByEmail')
-      .mockReturnValueOnce(null);
-
-    const accessToken = await sut.auth(mockAuthentication());
-
+    const { sut, loadAccountByEmailRepositorySpy } = makeSut();
+    loadAccountByEmailRepositorySpy.accountModel = null;
+    const accessToken = await sut.auth(mockAuthenticationParams());
     expect(accessToken).toBe(null);
   });
 
   it('should call HashComparer with correct values', async () => {
-    const { sut, hashComparerStub } = makeSut();
-    const compareSpy = jest.spyOn(hashComparerStub, 'compare');
-
-    await sut.auth(mockAuthentication());
-
-    expect(compareSpy).toHaveBeenCalledWith('any_password', 'hashed_value');
+    const { sut, hashComparerSpy, loadAccountByEmailRepositorySpy } = makeSut();
+    const authenticationParams = mockAuthenticationParams();
+    await sut.auth(authenticationParams);
+    expect(hashComparerSpy.plainText).toBe(authenticationParams.password);
+    expect(hashComparerSpy.digest).toBe(loadAccountByEmailRepositorySpy.accountModel.password);
   });
 
   it('should throw if HashComparer throws', async () => {
-    const { sut, hashComparerStub } = makeSut();
-    jest.spyOn(hashComparerStub, 'compare').mockImplementationOnce(throwError);
-
-    const promise = sut.auth(mockAuthentication());
-
+    const { sut, hashComparerSpy } = makeSut();
+    jest.spyOn(hashComparerSpy, 'compare').mockImplementationOnce(throwError);
+    const promise = sut.auth(mockAuthenticationParams());
     await expect(promise).rejects.toThrow();
   });
 
   it('should return null if HashComparer returns false', async () => {
-    const { sut, hashComparerStub } = makeSut();
-    jest.spyOn(hashComparerStub, 'compare')
-      .mockReturnValueOnce(Promise.resolve(false));
-
-    const accessToken = await sut.auth(mockAuthentication());
-
+    const { sut, hashComparerSpy } = makeSut();
+    hashComparerSpy.isValid = false;
+    const accessToken = await sut.auth(mockAuthenticationParams());
     expect(accessToken).toBe(null);
   });
 
-  it('should call Encrypter with correct id', async () => {
-    const { sut, encrypterStub } = makeSut();
-    const encryptSpy = jest.spyOn(encrypterStub, 'encrypt');
-
-    await sut.auth(mockAuthentication());
-
-    expect(encryptSpy).toHaveBeenCalledWith('any_id');
+  it('should call Encrypter with correct plaintext', async () => {
+    const { sut, encrypterSpy, loadAccountByEmailRepositorySpy } = makeSut();
+    const authenticationParams = mockAuthenticationParams();
+    await sut.auth(authenticationParams);
+    expect(encrypterSpy.plainText).toBe(loadAccountByEmailRepositorySpy.accountModel.id);
   });
 
   it('should throw if Encrypter throws', async () => {
-    const { sut, encrypterStub } = makeSut();
-    jest.spyOn(encrypterStub, 'encrypt').mockImplementationOnce(throwError);
-
-    const promise = sut.auth(mockAuthentication());
-
+    const { sut, encrypterSpy } = makeSut();
+    jest.spyOn(encrypterSpy, 'encrypt').mockImplementationOnce(throwError);
+    const promise = sut.auth(mockAuthenticationParams());
     await expect(promise).rejects.toThrow();
   });
 
   it('should return token on success', async () => {
-    const { sut } = makeSut();
-
-    const accessToken = await sut.auth(mockAuthentication());
-
-    expect(accessToken).toBe('any_token');
+    const { sut, encrypterSpy } = makeSut();
+    const accessToken = await sut.auth(mockAuthenticationParams());
+    expect(accessToken).toBe(encrypterSpy.cipherText);
   });
 
   it('should call UpdateAccessTokenRepository with correct values', async () => {
-    const { sut, updateAccessTokenRepositoryStub } = makeSut();
-    const updateSpy = jest.spyOn(updateAccessTokenRepositoryStub, 'updateAccessToken');
-
-    await sut.auth(mockAuthentication());
-
-    expect(updateSpy).toHaveBeenCalledWith('any_id', 'any_token');
+    const {
+      sut,
+      updateAccessTokenRepositorySpy,
+      loadAccountByEmailRepositorySpy,
+      encrypterSpy,
+    } = makeSut();
+    await sut.auth(mockAuthenticationParams());
+    expect(updateAccessTokenRepositorySpy.id).toBe(loadAccountByEmailRepositorySpy.accountModel.id);
+    expect(updateAccessTokenRepositorySpy.token).toBe(encrypterSpy.cipherText);
   });
 
   it('should throw if UpdateAccessTokenRepository throws', async () => {
-    const { sut, updateAccessTokenRepositoryStub } = makeSut();
-    jest.spyOn(updateAccessTokenRepositoryStub, 'updateAccessToken')
+    const { sut, updateAccessTokenRepositorySpy } = makeSut();
+    jest.spyOn(updateAccessTokenRepositorySpy, 'updateAccessToken')
       .mockImplementationOnce(throwError);
 
-    const promise = sut.auth(mockAuthentication());
+    const promise = sut.auth(mockAuthenticationParams());
 
     await expect(promise).rejects.toThrow();
   });

@@ -13,10 +13,10 @@ export class AccountMongoRepository implements
   LoadAccountByEmailRepository,
   LoadAccountByTokenRepository,
   UpdateAccessTokenRepository {
-  async add (accountData: AddAccountParams): Promise<AccountModel> {
+  async add (data: AddAccountParams): Promise<AccountModel> {
     const accountCollection = await MongoHelper.getCollection('accounts');
 
-    const result = await accountCollection.insertOne(accountData);
+    const result = await accountCollection.insertOne(data);
 
     return MongoHelper.map<AccountModel>(result.ops[0]);
   };
@@ -29,11 +29,11 @@ export class AccountMongoRepository implements
     return account && MongoHelper.map<AccountModel>(account);
   }
 
-  async loadByToken (accessToken: string, role?: string): Promise<AccountModel> {
+  async loadByToken (token: string, role?: string): Promise<AccountModel> {
     const accountCollection = await MongoHelper.getCollection('accounts');
 
     const account = await accountCollection.findOne({
-      accessToken,
+      accessToken: token,
       $or: [
         { role },
         { role: 'admin' },

@@ -25,7 +25,7 @@ const mockAccount = async (): Promise<AccountModel> => {
   return MongoHelper.map<AccountModel>(res.ops[0]);
 };
 
-describe('Survey Mongo Repository', () => {
+describe('SurveyResultMongoRepository', () => {
   beforeAll(async () => {
     await MongoHelper.connect(process.env.MONGO_URL);
     MockDate.set(new Date());
@@ -118,18 +118,6 @@ describe('Survey Mongo Repository', () => {
           answer: survey.answers[0].answer,
           date: new Date(),
         },
-        {
-          accountId: new ObjectId(account.id),
-          surveyId: new ObjectId(survey.id),
-          answer: survey.answers[1].answer,
-          date: new Date(),
-        },
-        {
-          accountId: new ObjectId(account.id),
-          surveyId: new ObjectId(survey.id),
-          answer: survey.answers[1].answer,
-          date: new Date(),
-        },
       ]);
 
       const sut = makeSut();
@@ -139,11 +127,9 @@ describe('Survey Mongo Repository', () => {
       expect(surveyResult).toBeTruthy();
       expect(surveyResult.surveyId).toEqual(survey.id);
       expect(surveyResult.answers[0].count).toBe(2);
-      expect(surveyResult.answers[0].percent).toBe(50);
-      expect(surveyResult.answers[1].count).toBe(2);
-      expect(surveyResult.answers[1].percent).toBe(50);
-      expect(surveyResult.answers[2].count).toBe(0);
-      expect(surveyResult.answers[2].percent).toBe(0);
+      expect(surveyResult.answers[0].percent).toBe(100);
+      expect(surveyResult.answers[1].count).toBe(0);
+      expect(surveyResult.answers[1].percent).toBe(0);
     });
 
     it('should return null if there is no survey result', async () => {

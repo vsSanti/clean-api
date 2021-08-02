@@ -1,41 +1,42 @@
+import faker from 'faker';
 import { Decrypter, Encrypter, HashComparer, Hasher } from '@/data/protocols/criptography';
 
-export const mockDecrypter = (): Decrypter => {
-  class DecrypterStub implements Decrypter {
-    async decrypt (accessToken: string): Promise<string> {
-      return 'valid_id';
-    }
+export class DecrypterSpy implements Decrypter {
+  plainText = faker.internet.password()
+  cipherText: string;
+
+  async decrypt (cipherText: string): Promise<string> {
+    this.cipherText = cipherText;
+    return this.plainText;
   }
+}
+export class EncrypterSpy implements Encrypter {
+  cipherText = faker.datatype.uuid();
+  plainText: string;
 
-  return new DecrypterStub();
-};
-
-export const mockEncrypter = (): Encrypter => {
-  class EncrypterStub implements Encrypter {
-    async encrypt (value: string): Promise<string> {
-      return Promise.resolve('any_token');
-    }
+  async encrypt (plainText: string): Promise<string> {
+    this.plainText = plainText;
+    return this.cipherText;
   }
+}
 
-  return new EncrypterStub();
-};
+export class HashComparerSpy implements HashComparer {
+  isValid = true;
+  plainText: string;
+  digest: string;
 
-export const mockHashComparer = (): HashComparer => {
-  class HashComparerStub implements HashComparer {
-    async compare (value: string, hash: string): Promise<boolean> {
-      return Promise.resolve(true);
-    }
+  async compare (plainText: string, digest: string): Promise<boolean> {
+    this.plainText = plainText;
+    this.digest = digest;
+    return Promise.resolve(this.isValid);
   }
+}
+export class HasherSpy implements Hasher {
+  digest = faker.datatype.uuid();
+  plainText: string;
 
-  return new HashComparerStub();
-};
-
-export const mockHasher = (): Hasher => {
-  class HasherStub implements Hasher {
-    async hash (value: string): Promise<string> {
-      return Promise.resolve('hashed_value');
-    }
+  async hash (plainText: string): Promise<string> {
+    this.plainText = plainText;
+    return Promise.resolve(this.digest);
   }
-
-  return new HasherStub();
-};
+}
