@@ -37,7 +37,7 @@ describe('SurveyResultMongoRepository', () => {
     surveyResultCollection = await MongoHelper.getCollection('survey-results');
     await surveyResultCollection.deleteMany({});
     accountCollection = await MongoHelper.getCollection('accounts');
-    await surveyCollection.deleteMany({});
+    await accountCollection.deleteMany({});
   });
 
   afterAll(async () => {
